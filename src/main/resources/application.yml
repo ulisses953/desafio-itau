@@ -12,3 +12,8 @@ spring:
     
 server:
   port: 8080
+
+custom:
+  transaction:
+    statistics:
+      timeInSeconds: 120
