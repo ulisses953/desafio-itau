@@ -1,11 +1,15 @@
 package com.itau.itau.service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +22,17 @@ import com.itau.itau.utils.Converter;
 @Service
 public class TransactionsService {
     private final TransactionsRepository repository;
+
+    private static final Logger logger = LoggerFactory.getLogger(TransactionsService.class);
     
     private final int timeInSeconds;
 
-    public TransactionsService(TransactionsRepository repository, 
-    @Value("${custom.transaction.statistics.timeInSeconds}") int timeInSeconds) {
+    private final ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
+
+    public TransactionsService(TransactionsRepository repository, @Value("${custom.transaction.statistics.timeInSeconds}") int timeInSeconds) {
         this.repository = repository;
         this.timeInSeconds = timeInSeconds;
+        logger.info("TimeInSeconds: " + timeInSeconds);
     }
 
     public UUID save(TransactionsDTO dto){
@@ -33,8 +41,11 @@ public class TransactionsService {
             throw new IllegalArgumentException("Date and value are required");
         }
 
-        if (dto.date().getTime() >= new Date().getTime()) {
-            throw new IllegalArgumentException("Date cannot be in the past");
+        if (dto.date().isAfter(LocalDateTime.now(zoneId))   
+            && dto.date().getHour() > LocalDateTime.now(zoneId).getHour() 
+            && dto.date().getMinute() > LocalDateTime.now(zoneId).getMinute()
+            && dto.date().getSecond() > LocalDateTime.now(zoneId).getSecond()) {
+            throw new IllegalArgumentException("Date cannot be in the future");
         }
 
         if (dto.value() < 0) {
@@ -59,7 +70,7 @@ public class TransactionsService {
     }
 
     public StatisticsDTO getStatistics() {
-        Date dateLimit = getTimer();
+        LocalDateTime dateLimit = getTimer();
 
         long count = repository.count(dateLimit);
         Double sum = repository.sum(dateLimit);
@@ -77,10 +88,12 @@ public class TransactionsService {
         );
     }
 
-    private Date getTimer() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.SECOND, - timeInSeconds);
-        return calendar.getTime();
+    private LocalDateTime getTimer() {
+       
+        LocalDateTime now = LocalDateTime.now(zoneId);
+        LocalDateTime dateLimit = now.minusSeconds(timeInSeconds);
+        logger.info(dateLimit.toString());
+        return dateLimit;
     }
         
 }

@@ -1,7 +1,7 @@
 package com.itau.itau.DTO;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
-public record TransactionsDTO(Date date, Double value) {
+public record TransactionsDTO(LocalDateTime date, Double value) {
     
 }

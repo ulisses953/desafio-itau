@@ -1,5 +1,6 @@
 package com.itau.itau.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -13,17 +14,17 @@ import com.itau.itau.Entity.Transactions;
 @Repository@EnableJpaRepositories
 public interface TransactionsRepository extends JpaRepository<Transactions,UUID>{
     @Query("SELECT COUNT(t) FROM Transactions t WHERE t.date >= :dateLimit")
-    long count(Date dateLimit);
+    long count(LocalDateTime dateLimit);
 
     @Query("SELECT SUM(t.value) FROM Transactions t WHERE t.date >= :dateLimit")
-    Double sum(Date dateLimit);
+    Double sum(LocalDateTime dateLimit);
 
     @Query("SELECT AVG(t.value) FROM Transactions t WHERE t.date >= :dateLimit")
-    Double avg(Date dateLimit);
+    Double avg(LocalDateTime dateLimit);
 
     @Query("SELECT MIN(t.value) FROM Transactions t WHERE t.date >= :dateLimit")
-    Double min(Date dateLimit);
+    Double min(LocalDateTime dateLimit);
 
     @Query("SELECT MAX(t.value) FROM Transactions t WHERE t.date >= :dateLimit")
-    Double max(Date dateLimit);
+    Double max(LocalDateTime dateLimit);
 }

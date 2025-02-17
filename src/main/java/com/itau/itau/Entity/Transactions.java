@@ -1,6 +1,7 @@
 package com.itau.itau.Entity;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
@@ -14,7 +15,7 @@ public class Transactions {
     @GeneratedValue(strategy = GenerationType.UUID)
     public UUID id;
     public Double value;
-    public Date date;
+    public LocalDateTime date;
     
     public UUID getId() {
         return id;
@@ -28,14 +29,14 @@ public class Transactions {
     public void setValue(Double value) {
         this.value = value;
     }
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
     
-    public Transactions(UUID id, Double value, Date date) {
+    public Transactions(UUID id, Double value, LocalDateTime date) {
         this.id = id;
         this.value = value;
         this.date = date;
@@ -43,7 +44,7 @@ public class Transactions {
     
     public Transactions() {
     }
-    public Transactions(Double value, Date date) {
+    public Transactions(Double value, LocalDateTime date) {
         this.value = value;
         this.date = date;
     }
