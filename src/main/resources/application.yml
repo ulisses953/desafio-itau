@@ -17,6 +17,10 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
+logging:
+  file:
+    name: itau.log
+
 custom:
   transaction:
     statistics:

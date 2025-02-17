@@ -3,8 +3,6 @@ package com.itau.itau.service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,10 +39,7 @@ public class TransactionsService {
             throw new IllegalArgumentException("Date and value are required");
         }
 
-        if (dto.date().isAfter(LocalDateTime.now(zoneId))   
-            && dto.date().getHour() > LocalDateTime.now(zoneId).getHour() 
-            && dto.date().getMinute() > LocalDateTime.now(zoneId).getMinute()
-            && dto.date().getSecond() > LocalDateTime.now(zoneId).getSecond()) {
+        if (dto.date().isAfter(LocalDateTime.now(zoneId))) {
             throw new IllegalArgumentException("Date cannot be in the future");
         }
 
@@ -52,12 +47,15 @@ public class TransactionsService {
             throw new IllegalArgumentException("Value must be non-negative");
         }
 
-        return repository.save(Converter.transactionsDTOToTransactions(dto)).getId();
+        UUID transactionId = repository.save(Converter.transactionsDTOToTransactions(dto)).getId();
+        logger.info("Transaction saved with ID: " + transactionId);
+        return transactionId;
     }
 
     public List<UUID> deleteAll() {
         List<UUID> ids = getIds(repository.findAll());
         repository.deleteAll();
+        logger.info("All transactions deleted");
         return ids;
     }
 
@@ -78,6 +76,7 @@ public class TransactionsService {
         Double min = repository.min(dateLimit);
         Double max = repository.max(dateLimit);
 
+        logger.info("Statistics calculated: count=" + count + ", sum=" + sum + ", avg=" + avg + ", min=" + min + ", max=" + max);
 
         return new StatisticsDTO(
                 count,
@@ -89,11 +88,9 @@ public class TransactionsService {
     }
 
     private LocalDateTime getTimer() {
-       
         LocalDateTime now = LocalDateTime.now(zoneId);
         LocalDateTime dateLimit = now.minusSeconds(timeInSeconds);
-        logger.info(dateLimit.toString());
+        logger.info("Date limit for statistics: " + dateLimit);
         return dateLimit;
     }
-        
 }
