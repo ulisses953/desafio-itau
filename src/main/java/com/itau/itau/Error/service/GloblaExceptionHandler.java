@@ -16,13 +16,13 @@ public class GloblaExceptionHandler {
     
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Void> handlerExeptionUnprocessableEntity(IllegalArgumentException ex){
-        logger.error("Illegal argument error", ex.getMessage());
+        logger.error("Illegal argument error", ex.toString());
         return new ResponseEntity<Void>(HttpStatus.UNPROCESSABLE_ENTITY); 
     }
 
-    // @ExceptionHandler(Exception.class)
-    // public ResponseEntity<Void> handlerExeption(Exception ex){
-    //     logger.error("Internal server error", ex.getMessage());
-    //     return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST); 
-    // }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Void> handlerExeption(Exception ex){
+        logger.error("Internal server error", ex.toString());
+        return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST); 
+    }
 }
